@@ -44,7 +44,7 @@ public class State {
     }
 
     public int getScore(String player) {
-
+        return 1;
     }
 
     public void play(Move move) {
