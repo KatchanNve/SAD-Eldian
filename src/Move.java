@@ -2,23 +2,28 @@ public class Move {
 
     private int name; //0 = clone / 1 = jump
     private int[] actualPosition;
-    private int[] futurePosition;
+    private int[] delta;
 
-    public Move(int name, int[] actualPosition, int[] futurePosition){
+    public Move(int name, int[] actualPosition, int[] delta){
         this.name = name;
         this.actualPosition = actualPosition;
-        this.futurePosition = futurePosition;
+        this.delta = delta;
     }
 
     public int getName() {
         return name;
     }
 
-    public int[] getActualPosition() {
-        return actualPosition;
+    public int getActualPosition(int i) {
+        return actualPosition[i];
     }
 
-    public int[] getFuturePosition() {
-        return futurePosition;
+    public int getDelta(int i) {
+        return delta[i];
+
     }
+
+
+
+
 }
