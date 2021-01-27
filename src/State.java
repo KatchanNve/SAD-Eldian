@@ -3,7 +3,7 @@ import java.util.List;
 
 public class State {
 
-    private final String player1;
+    private final String player1; //Hasti
     private final String player2;
     private String currentPlayer;
     private int pieces;
