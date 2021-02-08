@@ -17,12 +17,23 @@ public class State {
         this.playerTwo = playerTwo;
         this.currentPlayer = playerOne;
         this.board = new String[7][7];
+        this.listBoard = new ArrayList<String[][]>();
     }
 
     public State(String playerOne, String playerTwo, ArrayList<String[][]>listBoard, String currentPlayer){
         this(playerOne,playerTwo);
         this.listBoard = listBoard;
         this.currentPlayer = currentPlayer;
+    }
+
+    public void initGame(){
+        board[0][0] = playerOne;
+        board[6][6] = playerOne;
+        board[0][6] = playerTwo;
+        board[6][0] = playerTwo;
+        pieces = 4;
+        piecesPlayerOne = 2;
+        piecesPlayerTwo = 2;
     }
 
     public List<Move> getMove(String player){
@@ -71,6 +82,39 @@ public class State {
         }
         return piecesPlayerTwo / pieces;
     }
+
+    public void setCurrentPlayer(String currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
+    public String getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public String getOppenent() {
+        if(currentPlayer.equals(playerOne)){
+            return playerTwo;
+        }
+        return playerOne;
+    }
+
+    public String getPlayerOne() {
+        return playerOne;
+    }
+
+    public String getPlayerTwo() {
+        return playerTwo;
+    }
+
+    public String[][] getBoard() {
+        return board;
+    }
+
+    public void addBoardListElement(String[][] board){
+        listBoard.add(board);
+    }
+
+
 
     public State play(Move move) {
         if(move.getName() == 0){
@@ -125,5 +169,4 @@ public class State {
         }
         else return listBoard.contains(board);
     }
-
 }
