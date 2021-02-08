@@ -1,6 +1,6 @@
 public class Move {
 
-    private int name; //0 = clone / 1 = jump
+    private int name; //0 = clone / 1 = jump / 2 = pass
     private int[] actualPosition;
     private int[] delta;
 
@@ -9,6 +9,7 @@ public class Move {
         this.actualPosition = actualPosition;
         this.delta = delta;
     }
+
 
     public int getName() {
         return name;

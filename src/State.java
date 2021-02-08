@@ -76,11 +76,11 @@ public class State {
         return row + deltaRow >= 0 && row + deltaRow <= 6 && column + deltaColumn >= 0 && column + deltaColumn <= 6;
     }
 
-    public int getScore(String player) {
+    public float getScore(String player) {
         if(player.equals(playerOne)){
-            return piecesPlayerOne / pieces;
+            return (float) piecesPlayerOne / pieces;
         }
-        return piecesPlayerTwo / pieces;
+        return (float) piecesPlayerTwo / pieces;
     }
 
     public void setCurrentPlayer(String currentPlayer) {
@@ -117,7 +117,7 @@ public class State {
 
 
     public State play(Move move) {
-        if(move.getName() == 0){
+        if(move.getName() == 0){ // 0 = clonage et 1 = saut
             board[move.getActualPosition(0) + move.getDelta(0)][move.getActualPosition(1) + move.getDelta(1)] = currentPlayer;
             pieces++;
             if(currentPlayer.equals(playerOne)){
@@ -130,8 +130,8 @@ public class State {
         else{
             board[move.getActualPosition(0) + move.getDelta(0)][move.getActualPosition(1) + move.getDelta(1)] = currentPlayer;
             board[move.getActualPosition(0)][move.getActualPosition(1)] = null;
-
         }
+        infection(move);
         State newState = null;
         if(currentPlayer.equals(playerOne)){
             newState = new State(playerOne,playerTwo,listBoard,playerTwo);
@@ -140,6 +140,21 @@ public class State {
             newState = new State(playerOne,playerTwo,listBoard,playerOne);
         }
         return newState;
+    }
+
+    @SuppressWarnings("all")
+    public void infection(Move move){
+        int futurPositionX = move.getActualPosition(0) + move.getDelta(0);
+        int futurPositionY = move.getActualPosition(1) + move.getDelta(1);
+        for (int k = -1; k <= 1; k++) {
+            for (int l = -1; l <= 1; l++) {
+                if(caseisValid(futurPositionX,futurPositionY,k,l)){
+                    if(board[futurPositionX + k][futurPositionY + l] == getOppenent()){
+                        board[futurPositionX + k][futurPositionY + l] = getCurrentPlayer();
+                    }
+                }
+            }
+        }
     }
 
     public String printBoard(){
@@ -152,10 +167,10 @@ public class State {
                     boardStr += ". | ";
                 }
                 else if (player == playerOne) {
-                    boardStr += "\033[0;33m೦\033[0m | ";
+                    boardStr += "\033[0;31m೦\033[0m | ";
                 }
                 else {
-                    boardStr += "\033[0;36m೦\033[0m | ";
+                    boardStr += "\033[0;34m೦\033[0m | ";
                 }
             }
         }
@@ -164,9 +179,25 @@ public class State {
 
 
     public boolean isOver(){
-        if((getMove(playerOne) == null && getMove(playerTwo) == null) || (piecesPlayerOne == 0 || piecesPlayerTwo == 0)){
+        if((getMove(playerOne).size() == 0 && getMove(playerTwo).size() == 0) || (piecesPlayerOne == 0 || piecesPlayerTwo == 0)){
             return true;
         }
         else return listBoard.contains(board);
+    }
+
+    public int getPieces() {
+        return pieces;
+    }
+
+    public int getPiecesPlayerOne() {
+        return piecesPlayerOne;
+    }
+
+    public int getPiecesPlayerTwo() {
+        return piecesPlayerTwo;
+    }
+
+    public ArrayList<String[][]> getListBoard() {
+        return listBoard;
     }
 }
