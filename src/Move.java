@@ -22,8 +22,4 @@ public class Move {
         return delta[i];
 
     }
-
-
-
-
 }
