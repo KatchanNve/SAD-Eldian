@@ -1,12 +1,22 @@
-public class Algorithm {
+public class Minimax {
+
+    String player;
+    int deepness;
+
+    public Minimax(String player, int deepness){
+        this.deepness = deepness;
+        this.player = player;
+    }
 
 
-    public static Move getBestMove(State state, int deepness){
+    public Move getBestMove(State state){
         Move bestMove = null;
         float bestValue = Integer.MIN_VALUE;
         for(Move move : state.getMove(state.getCurrentPlayer())){
+            System.out.println("state :" + state.getPieces() + " J1 : " + state.getPiecesPlayerOne() + " J2 : " +state.getPiecesPlayerTwo());
             State nextstate = state.play(move);
-            float value = minimax(nextstate,deepness, state.getCurrentPlayer());
+            System.out.println("newstate :" + state.getPieces() + " J1 : " + state.getPiecesPlayerOne() + " J2 : " +state.getPiecesPlayerTwo());
+            float value = minimax(nextstate,deepness);
             System.out.println(value + " " + bestValue);
             if(value > bestValue){
                 bestValue = value;
@@ -17,17 +27,20 @@ public class Algorithm {
     }
 
 
-    private static float minimax(State state, int deepness, String currentPlayer){
+
+    @SuppressWarnings("all")
+    private float minimax(State state, int deepness){
         if(deepness == 0 || state.isOver()){
-            return state.getScore(currentPlayer);
+            System.out.println(state.getScore(this.player));
+            return state.getScore(this.player);
         }
         else{
-            if(state.getCurrentPlayer().equals(currentPlayer)){
-                System.out.println("je entre dans le if");
+            if(state.getCurrentPlayer().equals(this.player)){
+                System.out.println("je rentre dans le if");
                 float b = Integer.MIN_VALUE;
                 for(Move move : state.getMove(state.getCurrentPlayer())){
                     State nextstate = state.play(move);
-                    float m = minimax(nextstate,deepness - 1,state.getOppenent());
+                    float m = minimax(nextstate,deepness - 1);
                     if(b < m){
                         b = m;
                     }
@@ -37,9 +50,9 @@ public class Algorithm {
             }
             else{
                 float b = Integer.MAX_VALUE;
-                for(Move move : state.getMove(state.getOppenent())){
+                for(Move move : state.getMove(state.getCurrentPlayer())){
                     State nextstate = state.play(move);
-                    float m = minimax(nextstate,deepness - 1, state.getCurrentPlayer());
+                    float m = minimax(nextstate,deepness - 1);
                     if(b > m){
                         b = m;
                     }
