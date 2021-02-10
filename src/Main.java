@@ -1,12 +1,12 @@
 import java.util.List;
-import java.util.Random;
 
 public class Main {
 
     public static void main(String[] args) {
         State game = new State("Eren", "Mikasa");
         game.initGame();
-        System.out.println(game.printBoard());
+        //System.out.println(game.getPieces() + " J1 : " + game.getPiecesPlayerOne() + " J2 : " +game.getPiecesPlayerTwo());
+        //System.out.println(game.printBoard());
         do {
             //Random rand = new Random();
             List<Move> listMove = game.getMove(game.getCurrentPlayer());
@@ -15,9 +15,11 @@ public class Main {
                 continue;
             }
             //Move move = listMove.get(rand.nextInt(listMove.size()));
-            State newState = game.play(Algorithm.getBestMove(game,5));
+            Minimax minimax = new Minimax(game.getCurrentPlayer(),5);
+            //System.out.println(game.getPieces() + " J1 : " + game.getPiecesPlayerOne() + " J2 : " +game.getPiecesPlayerTwo());
+            State newState = game.play(minimax.getBestMove(game));
             System.out.println(game.printBoard());
-            System.out.println(game.getPieces() + " J1 : " + game.getPiecesPlayerOne() + " J2 : " +game.getPiecesPlayerTwo());
+            //System.out.println(game.getPieces() + " J1 : " + game.getPiecesPlayerOne() + " J2 : " +game.getPiecesPlayerTwo());
             game.setCurrentPlayer(game.getOppenent());
             game.addBoardListElement(newState.getBoard());
         }
