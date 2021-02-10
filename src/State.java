@@ -6,10 +6,10 @@ public class State {
     private String playerOne;
     private String playerTwo;
     private String currentPlayer;
-    private int pieces;
+    private String[][] board;
     private int piecesPlayerOne;
     private int piecesPlayerTwo;
-    private String[][] board;
+    private int pieces;
     private ArrayList<String[][]>listBoard;
 
     public State(String playerOne, String playerTwo){
@@ -28,8 +28,10 @@ public class State {
 
     public void initGame(){
         board[0][0] = playerOne;
+        System.out.println(board[0][0]);
         board[6][6] = playerOne;
         board[0][6] = playerTwo;
+        System.out.println(board[0][6]);
         board[6][0] = playerTwo;
         pieces = 4;
         piecesPlayerOne = 2;
@@ -77,10 +79,54 @@ public class State {
     }
 
     public float getScore(String player) {
-        if(player.equals(playerOne)){
-            return (float) piecesPlayerOne / pieces;
+        int piece1 = 0;
+        int piece2 = 0;
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
+                System.out.println(board[i][j]);
+                if(board[i][j] != null){
+                    if (board[i][j].equals(player)) {
+                        piece1++;
+                    }
+                    else{
+                        piece2++;
+                    }
+                }
+            }
         }
-        return (float) piecesPlayerTwo / pieces;
+        this.pieces = piece1 + piece2;
+        if (player.equals(getPlayerOne())) {
+            this.piecesPlayerOne = piece1;
+            this.piecesPlayerTwo = piece2;
+        } else {
+            this.piecesPlayerOne = piece2;
+            this.piecesPlayerTwo = piece1;
+        }
+        float score = 0;
+        score = piece1 / ((piece1 + piece2) * 1f);
+        System.out.println("score :" + piece1 / ((piece1 + piece2) * 1f));
+        System.out.println(piece1 + " " + piece2);
+        return score;
+    }
+
+    public void setScore() {
+        int piece1 = 0;
+        int piece2 = 0;
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
+                if(board[i][j] != null){
+                    if (board[i][j].equals(getPlayerOne())) {
+                        piece1++;
+                    }
+                    else{
+                        piece2++;
+                    }
+                }
+            }
+        }
+        this.piecesPlayerOne = piece1;
+        this.piecesPlayerTwo = piece2;
+        this.pieces = piece1 + piece2;
     }
 
     public void setCurrentPlayer(String currentPlayer) {
@@ -119,13 +165,6 @@ public class State {
     public State play(Move move) {
         if(move.getName() == 0){ // 0 = clonage et 1 = saut
             board[move.getActualPosition(0) + move.getDelta(0)][move.getActualPosition(1) + move.getDelta(1)] = currentPlayer;
-            pieces++;
-            if(currentPlayer.equals(playerOne)){
-                piecesPlayerOne++;
-            }
-            else{
-                piecesPlayerTwo++;
-            }
         }
         else{
             board[move.getActualPosition(0) + move.getDelta(0)][move.getActualPosition(1) + move.getDelta(1)] = currentPlayer;
@@ -139,6 +178,7 @@ public class State {
         else{
             newState = new State(playerOne,playerTwo,listBoard,playerOne);
         }
+        newState.setScore();
         return newState;
     }
 
@@ -179,6 +219,7 @@ public class State {
 
 
     public boolean isOver(){
+        float sc= getScore(playerOne);
         if((getMove(playerOne).size() == 0 && getMove(playerTwo).size() == 0) || (piecesPlayerOne == 0 || piecesPlayerTwo == 0)){
             return true;
         }
