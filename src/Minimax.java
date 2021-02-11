@@ -9,15 +9,15 @@ public class Minimax {
     }
 
 
-    public Move getBestMove(State state){
+    public Move getBestMove(State state, int deepness){
         Move bestMove = null;
         float bestValue = Integer.MIN_VALUE;
         for(Move move : state.getMove(state.getCurrentPlayer())){
-            System.out.println("state :" + state.getPieces() + " J1 : " + state.getPiecesPlayerOne() + " J2 : " +state.getPiecesPlayerTwo());
+            //System.out.println("state :" + state.getPieces() + " J1 : " + state.getPiecesPlayerOne() + " J2 : " +state.getPiecesPlayerTwo());
             State nextstate = state.play(move);
-            System.out.println("newstate :" + state.getPieces() + " J1 : " + state.getPiecesPlayerOne() + " J2 : " +state.getPiecesPlayerTwo());
+            //System.out.println("newstate :" + state.getPieces() + " J1 : " + state.getPiecesPlayerOne() + " J2 : " +state.getPiecesPlayerTwo());
             float value = minimax(nextstate,deepness);
-            System.out.println(value + " " + bestValue);
+            //System.out.println(value + " " + bestValue);
             if(value > bestValue){
                 bestValue = value;
                 bestMove = move;
@@ -31,12 +31,11 @@ public class Minimax {
     @SuppressWarnings("all")
     private float minimax(State state, int deepness){
         if(deepness == 0 || state.isOver()){
-            System.out.println(state.getScore(this.player));
             return state.getScore(this.player);
         }
         else{
             if(state.getCurrentPlayer().equals(this.player)){
-                System.out.println("je rentre dans le if");
+                //System.out.println("je rentre dans le if");
                 float b = Integer.MIN_VALUE;
                 for(Move move : state.getMove(state.getCurrentPlayer())){
                     State nextstate = state.play(move);
@@ -45,7 +44,6 @@ public class Minimax {
                         b = m;
                     }
                 }
-                System.out.println(b);
                 return b;
             }
             else{
@@ -57,7 +55,7 @@ public class Minimax {
                         b = m;
                     }
                 }
-                System.out.println(b);
+                //System.out.println(b);
                 return b;
             }
         }

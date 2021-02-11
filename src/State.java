@@ -20,18 +20,17 @@ public class State {
         this.listBoard = new ArrayList<String[][]>();
     }
 
-    public State(String playerOne, String playerTwo, ArrayList<String[][]>listBoard, String currentPlayer){
+    public State(String playerOne, String playerTwo, String[][] board, ArrayList<String[][]>listBoard, String currentPlayer){
         this(playerOne,playerTwo);
         this.listBoard = listBoard;
+        this.board = board;
         this.currentPlayer = currentPlayer;
     }
 
     public void initGame(){
         board[0][0] = playerOne;
-        System.out.println(board[0][0]);
         board[6][6] = playerOne;
         board[0][6] = playerTwo;
-        System.out.println(board[0][6]);
         board[6][0] = playerTwo;
         pieces = 4;
         piecesPlayerOne = 2;
@@ -83,7 +82,7 @@ public class State {
         int piece2 = 0;
         for (int i = 0; i < 7; i++) {
             for (int j = 0; j < 7; j++) {
-                System.out.println(board[i][j]);
+                //System.out.println(board[i][j]);
                 if(board[i][j] != null){
                     if (board[i][j].equals(player)) {
                         piece1++;
@@ -104,8 +103,8 @@ public class State {
         }
         float score = 0;
         score = piece1 / ((piece1 + piece2) * 1f);
-        System.out.println("score :" + piece1 / ((piece1 + piece2) * 1f));
-        System.out.println(piece1 + " " + piece2);
+        //System.out.println("score :" + piece1 / ((piece1 + piece2) * 1f));
+        //System.out.println(piece1 + " " + piece2);
         return score;
     }
 
@@ -163,38 +162,40 @@ public class State {
 
 
     public State play(Move move) {
+        String[][] newBoard = boardCopy();
         if(move.getName() == 0){ // 0 = clonage et 1 = saut
-            board[move.getActualPosition(0) + move.getDelta(0)][move.getActualPosition(1) + move.getDelta(1)] = currentPlayer;
+            newBoard[move.getActualPosition(0) + move.getDelta(0)][move.getActualPosition(1) + move.getDelta(1)] = currentPlayer;
         }
         else{
-            board[move.getActualPosition(0) + move.getDelta(0)][move.getActualPosition(1) + move.getDelta(1)] = currentPlayer;
-            board[move.getActualPosition(0)][move.getActualPosition(1)] = null;
+            newBoard[move.getActualPosition(0) + move.getDelta(0)][move.getActualPosition(1) + move.getDelta(1)] = currentPlayer;
+            newBoard[move.getActualPosition(0)][move.getActualPosition(1)] = null;
         }
-        infection(move);
+        newBoard = infection(move,newBoard);
         State newState = null;
         if(currentPlayer.equals(playerOne)){
-            newState = new State(playerOne,playerTwo,listBoard,playerTwo);
+            newState = new State(playerOne,playerTwo,newBoard,listBoard,playerTwo);
         }
         else{
-            newState = new State(playerOne,playerTwo,listBoard,playerOne);
+            newState = new State(playerOne,playerTwo,newBoard,listBoard,playerOne);
         }
         newState.setScore();
         return newState;
     }
 
     @SuppressWarnings("all")
-    public void infection(Move move){
+    public String[][] infection(Move move, String[][] newBoard){
         int futurPositionX = move.getActualPosition(0) + move.getDelta(0);
         int futurPositionY = move.getActualPosition(1) + move.getDelta(1);
         for (int k = -1; k <= 1; k++) {
             for (int l = -1; l <= 1; l++) {
                 if(caseisValid(futurPositionX,futurPositionY,k,l)){
-                    if(board[futurPositionX + k][futurPositionY + l] == getOppenent()){
-                        board[futurPositionX + k][futurPositionY + l] = getCurrentPlayer();
+                    if(newBoard[futurPositionX + k][futurPositionY + l] == getOppenent()){
+                        newBoard[futurPositionX + k][futurPositionY + l] = getCurrentPlayer();
                     }
                 }
             }
         }
+        return newBoard;
     }
 
     public String printBoard(){
@@ -219,7 +220,6 @@ public class State {
 
 
     public boolean isOver(){
-        float sc= getScore(playerOne);
         if((getMove(playerOne).size() == 0 && getMove(playerTwo).size() == 0) || (piecesPlayerOne == 0 || piecesPlayerTwo == 0)){
             return true;
         }
@@ -240,5 +240,17 @@ public class State {
 
     public ArrayList<String[][]> getListBoard() {
         return listBoard;
+    }
+
+    public void setBoard(String[][] board) {
+        this.board = board;
+    }
+
+    public String[][] boardCopy(){
+        String[][] newBoard = new String[7][7];
+        for (int i = 0; i < 7; i++) {
+            System.arraycopy(this.board[i], 0, newBoard[i], 0, 7);
+        }
+        return newBoard;
     }
 }
