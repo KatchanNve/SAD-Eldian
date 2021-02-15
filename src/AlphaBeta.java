@@ -1,24 +1,29 @@
-public class Minimax implements Algorithm{
+public class AlphaBeta implements Algorithm{
 
     String player;
     int deepness;
+    float alpha;
+    float beta;
 
-    public Minimax(String player, int deepness){
-        this.deepness = deepness;
+    public AlphaBeta(String player, int deepness, float alpha, float beta){
         this.player = player;
+        this.deepness = deepness;
+        this.alpha = alpha;
+        this.beta = beta;
     }
 
     @Override
     public Move getAlgoMove(State state, int deepness, float alpha, float beta) {
-        return getBestMove(state,deepness);
+        return getBestMove(state,deepness,alpha,beta);
     }
 
-    public Move getBestMove(State state, int deepness){
+
+    public Move getBestMove(State state,int deepness,float alpha, float beta){
         Move bestMove = null;
         float bestValue = Integer.MIN_VALUE;
         for(Move move : state.getMove(state.getCurrentPlayer())){
             State nextstate = state.play(move);
-            float value = minimax(nextstate,deepness);
+            float value = alphabeta(nextstate,alpha,beta,deepness);
             if(value > bestValue){
                 bestValue = value;
                 bestMove = move;
@@ -28,46 +33,42 @@ public class Minimax implements Algorithm{
     }
 
 
-
-    @SuppressWarnings("all")
-    private float minimax(State state, int deepness){
+    private float alphabeta(State state,float alpha, float beta, int deepness){
         if(deepness == 0 || state.isOver()){
             return state.getScore(this.player);
         }
         else{
             if(state.getCurrentPlayer().equals(this.player)){
-                float b = Integer.MIN_VALUE;
                 for(Move move : state.getMove(state.getCurrentPlayer())){
                     State nextstate = state.play(move);
-                    float m = minimax(nextstate,deepness - 1);
-                    if(b < m){
-                        b = m;
+                    alpha = Math.max(alpha,alphabeta(nextstate,alpha,beta,deepness -1));
+                    if(alpha >= beta){
+                        return alpha;
                     }
                 }
-                return b;
+                return alpha;
             }
             else{
-                float b = Integer.MAX_VALUE;
                 for(Move move : state.getMove(state.getCurrentPlayer())){
                     State nextstate = state.play(move);
-                    float m = minimax(nextstate,deepness - 1);
-                    if(b > m){
-                        b = m;
+                    beta = Math.min(beta,alphabeta(nextstate,alpha,beta,deepness -1));
+                    if(alpha >= beta){
+                        return beta;
                     }
                 }
-                return b;
+                return beta;
             }
         }
     }
 
     @Override
     public float getAlpha() {
-        return 0;
+        return alpha;
     }
 
     @Override
     public float getBeta() {
-        return 0;
+        return beta;
     }
 
     @Override
@@ -75,5 +76,3 @@ public class Minimax implements Algorithm{
         return deepness;
     }
 }
-
-
