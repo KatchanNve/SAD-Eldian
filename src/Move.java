@@ -4,6 +4,7 @@ public class Move {
     private int[] actualPosition;
     private int[] delta;
 
+    //ici le delta represente la direction dans laquelle le joueur souhaite se deplacer.
     public Move(int name, int[] actualPosition, int[] delta){
         this.name = name;
         this.actualPosition = actualPosition;

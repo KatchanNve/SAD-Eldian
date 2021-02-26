@@ -5,6 +5,13 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        //La fonction game permet de choisir le jeu de facon plus intuitif (c'est notre version)
+        game(scanner);
+        //Ah l'inverse la fonction cmd permet de lancer le programme dans le terminal afin de lancer directement la partie
+        //comme le précise l'ennoncé.
+    }
+
+    private static void game(Scanner scanner){
         System.out.println("Quel est le nom du joueur n°1 ?");
         String joueur1 = scanner.next();
         System.out.println("Quel type d'IA veux tu faire jouer pour le joueur 1 ? (random / minimax / alphabeta)");
@@ -26,17 +33,18 @@ public class Main {
                 continue;
             }
             if (game.getCurrentPlayer().equals(game.getPlayerOne())) {
-                System.out.println(algorithm1.getDeepness() + " " + algorithm1.getAlpha() + " " + algorithm1.getBeta());
+                //System.out.println(algorithm1.getDeepness() + " " + algorithm1.getAlpha() + " " + algorithm1.getBeta());
                 game = game.play(algorithm1.getAlgoMove(game, algorithm1.getDeepness(), algorithm1.getAlpha(), algorithm1.getBeta()));
             } else {
-                System.out.println(algorithm2.getDeepness() + " " + algorithm2.getAlpha() + " " + algorithm2.getBeta());
+                //System.out.println(algorithm2.getDeepness() + " " + algorithm2.getAlpha() + " " + algorithm2.getBeta());
                 game = game.play(algorithm2.getAlgoMove(game, algorithm2.getDeepness(), algorithm2.getAlpha(), algorithm2.getBeta()));
             }
             System.out.println(game.printBoard());
         }
         while (!game.isOver());
-        System.out.println(game.getScore(game.getPlayerOne()));
-        System.out.println(game.getScore(game.getPlayerTwo()));
+        //System.out.println(game.printBoard());
+        System.out.println("score player1 :" + game.getScore(game.getPlayerOne()));
+        System.out.println("score player2 :" + game.getScore(game.getPlayerTwo()));
         System.out.print("partie terminée : ");
         if (game.getScore(game.getPlayerOne()) > game.getScore(game.getPlayerTwo())) {
             System.out.print(game.getPlayerOne() + " gagne la partie");
@@ -47,6 +55,7 @@ public class Main {
         }
     }
 
+    //La methode correctEntry nous permet de verifier que nous recevons bien le bon argument dans le choix de l'algorithme
     public static String correctEntry(String entry, Scanner scanner) {
         while (!entry.equals("random") && !entry.equals("minimax") && !entry.equals("alphabeta")) {
             System.out.println("\033[0;31mErreur de saisie\033[0m : choisis dans la liste suivante (random / minimax / alphabeta)");
@@ -55,6 +64,8 @@ public class Main {
         return entry;
     }
 
+    //les methodes testInteger et testFloat testent réspectivement la présence dans l'entrée scanner d'un entier ou
+    //d'un float afin d'eviter d'eventuelles erreurs de compilation.
     public static int testInteger(String entry, Scanner scanner) {
         while (!isNumeric(entry)) {
             System.out.println("\033[0;31mErreur de saisie\033[0m : Veuillez rentrer une valeur correcte !");
@@ -90,6 +101,9 @@ public class Main {
     }
 
 
+    //Cette méthode permet de créer le bon algorithme en fonction de l'argument d'entrée du scanner.
+    //Pour cela nous passons par une Interface Algorithm qui represente un algorithme en général.
+    //Chaque algorithmes implemente cette interface qui possede une méthode universelle de getMove.
     public static Algorithm inputAlgorithm(String type, String player, Scanner scanner){
         Algorithm algorithm;
         if(type.equals("random")){
@@ -102,20 +116,20 @@ public class Main {
                 algorithm = new Minimax(player, deepness);
             }
             else{
-                System.out.println("quel alpha ('+' si l'infini) ?");
+                System.out.println("quel alpha ('-' si l'infini) ?");
                 String entry = scanner.next();
                 float alpha;
                 float beta;
-                if(entry.equals("+")){
-                    alpha = Float.MAX_VALUE;
+                if(entry.equals("-")){
+                    alpha = Float.MIN_VALUE;
                 }
                 else{
                     alpha = testFloat(entry,scanner);
                 }
-                System.out.println("quel beta ('-' si l'infini) ?");
+                System.out.println("quel beta ('+' si l'infini) ?");
                 entry = scanner.next();
-                if(entry.equals("-")){
-                    beta = Float.MIN_VALUE;
+                if(entry.equals("+")){
+                    beta = Float.MAX_VALUE;
                 }
                 else{
                     beta = testFloat(entry,scanner);

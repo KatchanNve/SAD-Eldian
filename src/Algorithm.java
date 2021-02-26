@@ -4,6 +4,4 @@ public interface Algorithm {
     abstract public int getDeepness();
     abstract public float getAlpha();
     abstract public float getBeta();
-
-    
 }

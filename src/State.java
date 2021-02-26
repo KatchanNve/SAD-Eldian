@@ -3,8 +3,8 @@ import java.util.List;
 
 public class State {
 
-    private String playerOne;
-    private String playerTwo;
+    private final String playerOne;
+    private final String playerTwo;
     private String currentPlayer;
     private String[][] board;
     private int piecesPlayerOne;
@@ -20,11 +20,15 @@ public class State {
         this.listBoard = new ArrayList<String[][]>();
     }
 
-    public State(String playerOne, String playerTwo, String[][] board, ArrayList<String[][]>listBoard, String currentPlayer){
+    public State(String playerOne, String playerTwo, String[][] board, ArrayList<String[][]>listBoard, String currentPlayer,
+                 int pieces, int piecesPlayerOne, int piecesPlayerTwo){
         this(playerOne,playerTwo);
         this.listBoard = listBoard;
         this.board = board;
         this.currentPlayer = currentPlayer;
+        this.pieces = pieces;
+        this.piecesPlayerOne = piecesPlayerOne;
+        this.piecesPlayerTwo = piecesPlayerTwo;
     }
 
     public void initGame(){
@@ -80,52 +84,19 @@ public class State {
     public float getScore(String player) {
         int piece1 = 0;
         int piece2 = 0;
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
-                //System.out.println(board[i][j]);
-                if(board[i][j] != null){
-                    if (board[i][j].equals(player)) {
-                        piece1++;
-                    }
-                    else{
-                        piece2++;
-                    }
-                }
-            }
+        if(player.equals(playerOne)){
+            piece1 = piecesPlayerOne;
+            piece2 = piecesPlayerTwo;
         }
-        this.pieces = piece1 + piece2;
-        if (player.equals(getPlayerOne())) {
-            this.piecesPlayerOne = piece1;
-            this.piecesPlayerTwo = piece2;
-        } else {
-            this.piecesPlayerOne = piece2;
-            this.piecesPlayerTwo = piece1;
+        else{
+            piece1 = piecesPlayerTwo;
+            piece2 = piecesPlayerOne;
         }
         float score = 0;
         score = piece1 / ((piece1 + piece2) * 1f);
-        //System.out.println("score :" + piece1 / ((piece1 + piece2) * 1f));
+        //System.out.println("score :" + score);
         //System.out.println(piece1 + " " + piece2);
         return score;
-    }
-
-    public void setScore() {
-        int piece1 = 0;
-        int piece2 = 0;
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
-                if(board[i][j] != null){
-                    if (board[i][j].equals(getPlayerOne())) {
-                        piece1++;
-                    }
-                    else{
-                        piece2++;
-                    }
-                }
-            }
-        }
-        this.piecesPlayerOne = piece1;
-        this.piecesPlayerTwo = piece2;
-        this.pieces = piece1 + piece2;
     }
 
     public void setCurrentPlayer(String currentPlayer) {
@@ -165,6 +136,13 @@ public class State {
         String[][] newBoard = boardCopy();
         if(move.getName() == 0){ // 0 = clonage et 1 = saut
             newBoard[move.getActualPosition(0) + move.getDelta(0)][move.getActualPosition(1) + move.getDelta(1)] = currentPlayer;
+            if(getCurrentPlayer() == playerOne){
+                piecesPlayerOne += 1;
+            }
+            else{
+                piecesPlayerTwo += 1;
+            }
+            pieces++;
         }
         else{
             newBoard[move.getActualPosition(0) + move.getDelta(0)][move.getActualPosition(1) + move.getDelta(1)] = currentPlayer;
@@ -173,12 +151,11 @@ public class State {
         newBoard = infection(move,newBoard);
         State newState = null;
         if(currentPlayer.equals(playerOne)){
-            newState = new State(playerOne,playerTwo,newBoard,listBoard,playerTwo);
+            newState = new State(playerOne,playerTwo,newBoard,listBoard,playerTwo,pieces,piecesPlayerOne,piecesPlayerTwo);
         }
         else{
-            newState = new State(playerOne,playerTwo,newBoard,listBoard,playerOne);
+            newState = new State(playerOne,playerTwo,newBoard,listBoard,playerOne,pieces,piecesPlayerOne,piecesPlayerTwo);
         }
-        newState.setScore();
         return newState;
     }
 
@@ -191,6 +168,13 @@ public class State {
                 if(caseisValid(futurPositionX,futurPositionY,k,l)){
                     if(newBoard[futurPositionX + k][futurPositionY + l] == getOppenent()){
                         newBoard[futurPositionX + k][futurPositionY + l] = getCurrentPlayer();
+                        if(getCurrentPlayer() == playerOne){
+                            piecesPlayerOne += 1;
+                        }
+                        else{
+                            piecesPlayerTwo += 1;
+                        }
+                        pieces++;
                     }
                 }
             }
@@ -199,23 +183,23 @@ public class State {
     }
 
     public String printBoard(){
-        String boardStr = "";
+        StringBuilder boardStr = new StringBuilder();
         for(String[] line : this.board) {
-            boardStr += System.lineSeparator();
-            boardStr+= "| ";
+            boardStr.append(System.lineSeparator());
+            boardStr.append("| ");
             for (String player : line) {
                 if (player == null) {
-                    boardStr += ". | ";
+                    boardStr.append(". | ");
                 }
                 else if (player == playerOne) {
-                    boardStr += "\033[0;31m೦\033[0m | ";
+                    boardStr.append("\033[0;34m೦\033[0m | ");
                 }
                 else {
-                    boardStr += "\033[0;34m೦\033[0m | ";
+                    boardStr.append("\033[0;31m೦\033[0m | ");
                 }
             }
         }
-        return boardStr;
+        return boardStr.toString();
     }
 
 
@@ -236,6 +220,18 @@ public class State {
 
     public int getPiecesPlayerTwo() {
         return piecesPlayerTwo;
+    }
+
+    public void setPieces(int pieces) {
+        this.pieces = pieces;
+    }
+
+    public void setPiecesPlayerOne(int piecesPlayerOne) {
+        this.piecesPlayerOne = piecesPlayerOne;
+    }
+
+    public void setPiecesPlayerTwo(int piecesPlayerTwo) {
+        this.piecesPlayerTwo = piecesPlayerTwo;
     }
 
     public ArrayList<String[][]> getListBoard() {
