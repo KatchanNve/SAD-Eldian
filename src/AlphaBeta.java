@@ -4,12 +4,15 @@ public class AlphaBeta implements Algorithm{
     int deepness;
     float alpha;
     float beta;
+    int count;
+
 
     public AlphaBeta(String player, int deepness, float alpha, float beta){
         this.player = player;
         this.deepness = deepness;
         this.alpha = alpha;
         this.beta = beta;
+        this.count = 0;
     }
 
     @Override
@@ -40,6 +43,7 @@ public class AlphaBeta implements Algorithm{
         else{
             if(state.getCurrentPlayer().equals(this.player)){
                 for(Move move : state.getMove(state.getCurrentPlayer())){
+                    this.count += 1;
                     State nextstate = state.play(move);
                     alpha = Math.max(alpha,alphabeta(nextstate,alpha,beta,deepness -1));
                     if(alpha >= beta){
@@ -50,6 +54,7 @@ public class AlphaBeta implements Algorithm{
             }
             else{
                 for(Move move : state.getMove(state.getCurrentPlayer())){
+                    this.count += 1;
                     State nextstate = state.play(move);
                     beta = Math.min(beta,alphabeta(nextstate,alpha,beta,deepness -1));
                     if(alpha >= beta){
@@ -69,6 +74,16 @@ public class AlphaBeta implements Algorithm{
     @Override
     public float getBeta() {
         return beta;
+    }
+
+    @Override
+    public int getCount() {
+        return this.count;
+    }
+
+    @Override
+    public void setCount(int count) {
+        this.count = count;
     }
 
     @Override

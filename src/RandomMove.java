@@ -4,10 +4,12 @@ import java.util.Random;
 public class RandomMove implements Algorithm{
 
     String player;
+    int count;
 
 
     public RandomMove(String player){
         this.player = player;
+        this.count = 0;
     }
 
     public Move getRandomMove(List<Move> listMove){
@@ -30,7 +32,17 @@ public class RandomMove implements Algorithm{
     }
 
     @Override
-    public int getDeepness() {
+    public int getCount() {
         return 0;
+    }
+
+    @Override
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    @Override
+    public int getDeepness() {
+        return this.count;
     }
 }

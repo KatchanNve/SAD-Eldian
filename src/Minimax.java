@@ -2,11 +2,15 @@ public class Minimax implements Algorithm{
 
     String player;
     int deepness;
+    int count;
 
     public Minimax(String player, int deepness){
         this.deepness = deepness;
         this.player = player;
+        this.count = 0;
     }
+
+
 
     @Override
     public Move getAlgoMove(State state, int deepness, float alpha, float beta) {
@@ -27,8 +31,6 @@ public class Minimax implements Algorithm{
         return bestMove;
     }
 
-
-
     @SuppressWarnings("all")
     private float minimax(State state, int deepness){
         if(deepness == 0 || state.isOver()){
@@ -38,6 +40,7 @@ public class Minimax implements Algorithm{
             if(state.getCurrentPlayer().equals(this.player)){
                 float b = Integer.MIN_VALUE;
                 for(Move move : state.getMove(state.getCurrentPlayer())){
+                    this.count += 1;
                     State nextstate = state.play(move);
                     float m = minimax(nextstate,deepness - 1);
                     if(b < m){
@@ -49,6 +52,7 @@ public class Minimax implements Algorithm{
             else{
                 float b = Integer.MAX_VALUE;
                 for(Move move : state.getMove(state.getCurrentPlayer())){
+                    this.count += 1;
                     State nextstate = state.play(move);
                     float m = minimax(nextstate,deepness - 1);
                     if(b > m){
@@ -68,6 +72,16 @@ public class Minimax implements Algorithm{
     @Override
     public float getBeta() {
         return 0;
+    }
+
+    @Override
+    public int getCount() {
+        return this.count;
+    }
+
+    @Override
+    public void setCount(int count) {
+        this.count = count;
     }
 
     @Override

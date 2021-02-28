@@ -81,24 +81,6 @@ public class State {
         return row + deltaRow >= 0 && row + deltaRow <= 6 && column + deltaColumn >= 0 && column + deltaColumn <= 6;
     }
 
-    public float getScore(String player) {
-        int piece1 = 0;
-        int piece2 = 0;
-        if(player.equals(playerOne)){
-            piece1 = piecesPlayerOne;
-            piece2 = piecesPlayerTwo;
-        }
-        else{
-            piece1 = piecesPlayerTwo;
-            piece2 = piecesPlayerOne;
-        }
-        float score = 0;
-        score = piece1 / ((piece1 + piece2) * 1f);
-        //System.out.println("score :" + score);
-        //System.out.println(piece1 + " " + piece2);
-        return score;
-    }
-
     public void setCurrentPlayer(String currentPlayer) {
         this.currentPlayer = currentPlayer;
     }
@@ -134,21 +116,21 @@ public class State {
 
     public State play(Move move) {
         String[][] newBoard = boardCopy();
-        if(move.getName() == 0){ // 0 = clonage et 1 = saut
+        if(move.getName() == 0){ // 0 = clonage
             newBoard[move.getActualPosition(0) + move.getDelta(0)][move.getActualPosition(1) + move.getDelta(1)] = currentPlayer;
-            if(getCurrentPlayer() == playerOne){
+            /*if(getCurrentPlayer() == playerOne){
                 piecesPlayerOne += 1;
             }
             else{
                 piecesPlayerTwo += 1;
             }
-            pieces++;
+            pieces++;*/
         }
-        else{
+        else{ //1 = saut
             newBoard[move.getActualPosition(0) + move.getDelta(0)][move.getActualPosition(1) + move.getDelta(1)] = currentPlayer;
             newBoard[move.getActualPosition(0)][move.getActualPosition(1)] = null;
         }
-        newBoard = infection(move,newBoard);
+        newBoard = infection(move,newBoard); //l'infection permet d'infecter les cases adjacentes du piont venant de bouger / ou apparu.
         State newState = null;
         if(currentPlayer.equals(playerOne)){
             newState = new State(playerOne,playerTwo,newBoard,listBoard,playerTwo,pieces,piecesPlayerOne,piecesPlayerTwo);
@@ -156,6 +138,8 @@ public class State {
         else{
             newState = new State(playerOne,playerTwo,newBoard,listBoard,playerOne,pieces,piecesPlayerOne,piecesPlayerTwo);
         }
+        newState.setScore();
+        //ce setScore permet de retourner le nombre exact de pieces dans le nouveau state.
         return newState;
     }
 
@@ -168,13 +152,13 @@ public class State {
                 if(caseisValid(futurPositionX,futurPositionY,k,l)){
                     if(newBoard[futurPositionX + k][futurPositionY + l] == getOppenent()){
                         newBoard[futurPositionX + k][futurPositionY + l] = getCurrentPlayer();
-                        if(getCurrentPlayer() == playerOne){
+                        /*if(getCurrentPlayer() == playerOne){
                             piecesPlayerOne += 1;
                         }
                         else{
                             piecesPlayerTwo += 1;
                         }
-                        pieces++;
+                        pieces++;*/
                     }
                 }
             }
@@ -209,6 +193,58 @@ public class State {
         }
         else return listBoard.contains(board);
     }
+
+    public void setScore() {
+        int piece1 = 0;
+        int piece2 = 0;
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
+                if(board[i][j] != null){
+                    if (board[i][j].equals(getPlayerOne())) {
+                        piece1++;
+                    }
+                    else{
+                        piece2++;
+                    }
+                }
+            }
+        }
+        this.piecesPlayerOne = piece1;
+        this.piecesPlayerTwo = piece2;
+        this.pieces = piece1 + piece2;
+    }
+
+    public float getScore(String player) {
+        int piece1 = 0;
+        int piece2 = 0;
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
+                //System.out.println(board[i][j]);
+                if(board[i][j] != null){
+                    if (board[i][j].equals(player)) {
+                        piece1++;
+                    }
+                    else{
+                        piece2++;
+                    }
+                }
+            }
+        }
+        this.pieces = piece1 + piece2;
+        if (player.equals(getPlayerOne())) {
+            this.piecesPlayerOne = piece1;
+            this.piecesPlayerTwo = piece2;
+        } else {
+            this.piecesPlayerOne = piece2;
+            this.piecesPlayerTwo = piece1;
+        }
+        float score = 0;
+        score = piece1 / ((piece1 + piece2) * 1f);
+        //System.out.println("score :" + piece1 / ((piece1 + piece2) * 1f));
+        //System.out.println(piece1 + " " + piece2);
+        return score;
+    }
+
 
     public int getPieces() {
         return pieces;
